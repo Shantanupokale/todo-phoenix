@@ -1,14 +1,20 @@
 import Config
 
 # Configure your database
+# config :todo_buddy, TodoBuddy.Repo,
+#   username: "postgres",
+#   password: "postgres",
+#   hostname: "localhost",
+#   database: "todo_buddy_dev",
+#   stacktrace: true,
+#   show_sensitive_data_on_connection_error: true,
+#   pool_size: 10
+
 config :todo_buddy, TodoBuddy.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "todo_buddy_dev",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  url: "postgresql://neondb_owner:npg_DKpl3vgfyt0G@ep-fragrant-silence-aiq8wmdx-pooler.c-4.us-east-1.aws.neon.tech/tododb?sslmode=require&channel_binding=require",
+  ssl: true,
+  ssl_opts: [verify: :verify_none],
+  pool_size: 5
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
