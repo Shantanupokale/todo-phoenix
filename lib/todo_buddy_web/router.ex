@@ -1,5 +1,6 @@
 defmodule TodoBuddyWeb.Router do
   use TodoBuddyWeb, :router
+  import TodoBuddyWeb.Plugs.Auth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -16,6 +17,17 @@ defmodule TodoBuddyWeb.Router do
 
   scope "/", TodoBuddyWeb do
     pipe_through :browser
+
+    # routes on ui
+    # this is just like adding route.js 
+    live "/", LandingLive
+    live "/login", LoginLive
+    live "/register", RegisterLive
+    live "/dashboard", DashboardLive
+
+    # middlewares
+    get "/auth/callback", AuthController, :callback
+    get "/auth/logout", AuthController, :logout
 
     get "/", PageController, :home
   end
