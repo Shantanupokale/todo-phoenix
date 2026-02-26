@@ -67,7 +67,7 @@ defmodule TodoBuddyWeb.LandingLive do
         </svg>
         <span>by</span>
         <a
-          href="https://github.com/Shantanupokale/node-todo-frontend"
+          href="https://github.com/Shantanupokale/todo-phoenix"
           target="_blank"
           rel="noopener noreferrer"
           class="text-base-content hover:underline underline-offset-2"

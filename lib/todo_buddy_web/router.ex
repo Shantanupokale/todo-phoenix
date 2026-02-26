@@ -1,36 +1,63 @@
 defmodule TodoBuddyWeb.Router do
   use TodoBuddyWeb, :router
-  import TodoBuddyWeb.Plugs.Auth
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {TodoBuddyWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {TodoBuddyWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
-  scope "/", TodoBuddyWeb do
-    pipe_through :browser
+  pipeline :require_auth do
+    plug TodoBuddyWeb.Plugs.Auth, :require_auth
+  end
 
-    # routes on ui
-    # this is just like adding route.js 
-    live "/", LandingLive
+  pipeline :redirect_if_authenticated do
+    plug TodoBuddyWeb.Plugs.Auth, :redirect_if_authenticated
+  end
+
+
+    # public pages (but redirect logged-in users away from login/register)
+  scope "/", TodoBuddyWeb do
+    pipe_through [:browser, :redirect_if_authenticated]
     live "/login", LoginLive
     live "/register", RegisterLive
-    live "/dashboard", DashboardLive
+  end
 
-    # middlewares
+  # public pages
+  scope "/", TodoBuddyWeb do
+    pipe_through :browser
+    live "/", LandingLive
     get "/auth/callback", AuthController, :callback
     get "/auth/logout", AuthController, :logout
-
-    get "/", PageController, :home
   end
+
+  # protected pages
+  scope "/", TodoBuddyWeb do
+    pipe_through [:browser, :require_auth]
+    live "/dashboard", DashboardLive
+  end
+
+
+  # scope "/", TodoBuddyWeb do
+  #   pipe_through(:browser)
+
+  #   live("/", LandingLive)
+  #   live("/login", LoginLive)
+  #   live("/register", RegisterLive)
+  #   live("/dashboard", DashboardLive)
+
+  #   get("/auth/callback", AuthController, :callback)
+  #   get("/auth/logout", AuthController, :logout)
+  # end
+
+
 
   # Other scopes may use custom stacks.
   # scope "/api", TodoBuddyWeb do

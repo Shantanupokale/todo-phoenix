@@ -4,6 +4,10 @@ defmodule TodoBuddyWeb.Plugs.Auth do
 
   def init(opts), do: opts
 
+  def call(conn, action) do
+  apply(__MODULE__, action, [conn, []])
+  end
+
   # it will act as authmiddleware.js
   def require_auth(conn, _opts) do
     if get_session(conn, :user_id) do
